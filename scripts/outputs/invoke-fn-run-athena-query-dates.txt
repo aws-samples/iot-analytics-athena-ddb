@@ -1,0 +1,63 @@
+Invoking fn-run-athena-query.lambda_handler (python3.9)
+Skip pulling image and use local one: public.ecr.aws/sam/emulation-python3.9:rapid-1.52.0-x86_64.
+
+Mounting /home/ec2-user/environment/dev-workspaces/aws-github/iot-analytics-athena-ddb/sam-iot-analytics/.aws-sam/build/RunAthenaQueryFunction as /var/task:ro,delegated inside runtime container
+START RequestId: 34442396-5aed-4c4d-817f-f83ff9585b7e Version: $LATEST
+Running Athena queries daily, after CSV uploaded to S3
+
+Output Location for Athena results: s3://iot-athena-results-XXXXXXXXXXXX-us-west-2/
+
+Running Athena queries for this date: 2022/01/01
+
+Total Electricity metered by hour => Query Execution ID: 128683e8-6781-4c0b-893b-47ab8b10ac9a
+Total Electricity metered by day => Query Execution ID: d17a0bab-2737-4022-87bd-65913615ecd1
+END RequestId: 34442396-5aed-4c4d-817f-f83ff9585b7e
+REPORT RequestId: 34442396-5aed-4c4d-817f-f83ff9585b7e  Init Duration: 0.13 ms  Duration: 783.03 ms       Billed Duration: 784 ms Memory Size: 128 MB     Max Memory Used: 128 MB
+null
+To download: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html
+Invoking fn-run-athena-query.lambda_handler (python3.9)
+Skip pulling image and use local one: public.ecr.aws/sam/emulation-python3.9:rapid-1.52.0-x86_64.
+
+Mounting /home/ec2-user/environment/dev-workspaces/aws-github/iot-analytics-athena-ddb/sam-iot-analytics/.aws-sam/build/RunAthenaQueryFunction as /var/task:ro,delegated inside runtime container
+START RequestId: 048ee36b-012f-4c72-a0b4-7f7e93bd68b7 Version: $LATEST
+Running Athena queries daily, after CSV uploaded to S3
+
+Output Location for Athena results: s3://iot-athena-results-XXXXXXXXXXXX-us-west-2/
+
+Running Athena queries for this date: 2022/01/02
+
+Total Electricity metered by hour => Query Execution ID: 1e1ba3c7-e230-449c-98c3-3d2d31e780c2
+Total Electricity metered by day => Query Execution ID: 22c752cb-38aa-4e1c-91f1-535e52868f8c
+nullEND RequestId: 048ee36b-012f-4c72-a0b4-7f7e93bd68b7
+REPORT RequestId: 048ee36b-012f-4c72-a0b4-7f7e93bd68b7  Init Duration: 0.14 ms  Duration: 373.70 ms       Billed Duration: 374 ms Memory Size: 128 MB     Max Memory Used: 128 MB
+...
+
+Mounting /home/ec2-user/environment/dev-workspaces/aws-github/iot-analytics-athena-ddb/sam-iot-analytics/.aws-sam/build/RunAthenaQueryFunction as /var/task:ro,delegated inside runtime container
+START RequestId: 30392804-3af5-4e48-8910-260191c63425 Version: $LATEST
+Running Athena queries daily, after CSV uploaded to S3
+
+Output Location for Athena results: s3://iot-athena-results-XXXXXXXXXXXX-us-west-2/
+
+Running Athena queries for this date: 2022/01/31
+
+Total Electricity metered by hour => Query Execution ID: 898fd62f-84eb-404a-bdba-29e0ed59c98a
+Total Electricity metered by day => Query Execution ID: 16ed6841-5018-4cef-81f4-19ff6d933753
+Total Electricity metered by month => Query Execution ID: 455258df-c338-4ba4-87ef-c2cfd15f19ff
+END RequestId: 30392804-3af5-4e48-8910-260191c63425
+REPORT RequestId: 30392804-3af5-4e48-8910-260191c63425  Init Duration: 0.06 ms  Duration: 402.77 ms       Billed Duration: 403 ms Memory Size: 128 MB     Max Memory Used: 128 MB
+null[
+    {
+        "FunctionName": "fn-run-athena-query"
+    },
+    {
+        "Runtime": "python3.9"
+    },
+    {
+        "Environment": {
+            "Variables": {
+                "ev_athena_output_location": "s3://iot-athena-results-XXXXXXXXXXXX-us-west-2/",
+                "ev_date_run": "0000/00/00"
+            }
+        }
+    }
+]

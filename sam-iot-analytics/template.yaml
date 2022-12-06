@@ -1,0 +1,305 @@
+#********************************************************
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+#********************************************************
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template - 
+  
+  This serverless app deploys the resources needed by the IoT analytical solution, using Athena and DynamoDB. 
+  
+  This solution is part of Blog Post "Writing Athena query outputs to Amazon DynamoDB".
+
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: python3.9
+
+Resources:
+  #---------- IAM ---------------
+  LambdaIoTAnalyticExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+  
+  LambdaAthenaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+  
+  LambdaIoTAnalyticExecutionRolePolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties: 
+      PolicyName: lambda-iot-analytic-policy
+      PolicyDocument: 
+        Statement: 
+          - Effect: Allow
+            Action:
+              - 'xray:PutTraceSegments'
+              - 'xray:PutTelemetryRecords'
+              - 'xray:GetSamplingRules'
+              - 'xray:GetSamplingTargets'
+              - 'xray:GetSamplingStatisticSummaries'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 's3:GetBucketLocation'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+            Resource: 'arn:aws:s3:::iot-athena-results-*'
+          - Effect: Allow
+            Action:
+              - 'sns:ListTopics'
+              - 'sns:GetTopicAttributes'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'cloudwatch:PutMetricAlarm'
+              - 'cloudwatch:DescribeAlarms'
+              - 'cloudwatch:DeleteAlarms'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'lakeformation:GetDataAccess'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'dynamodb:DescribeTable'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:BatchGetItem'
+              - 'dynamodb:BatchWriteItem'
+              - 'dynamodb:ConditionCheckItem'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:Scan'
+              - 'dynamodb:Query'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:DescribeTimeToLive'
+              - 'dynamodb:GetRecords'
+            Resource: 
+              - 'arn:aws:dynamodb:*:*:table/ElectricityMeteredByPeriod'
+      Roles: 
+        - !Ref LambdaIoTAnalyticExecutionRole
+  
+  LambdaAthenaExecutionRolePolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties: 
+      PolicyName: lambda-athena-policy
+      PolicyDocument: 
+        Statement: 
+          - Effect: Allow
+            Action:
+              - 'xray:PutTraceSegments'
+              - 'xray:PutTelemetryRecords'
+              - 'xray:GetSamplingRules'
+              - 'xray:GetSamplingTargets'
+              - 'xray:GetSamplingStatisticSummaries'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'athena:BatchGetNamedQuery'
+              - 'athena:BatchGetQueryExecution'
+              - 'athena:GetDataCatalog'
+              - 'athena:GetDatabase'
+              - 'athena:GetNamedQuery'
+              - 'athena:GetPreparedStatement'
+              - 'athena:GetQueryExecution'
+              - 'athena:GetQueryResults'
+              - 'athena:GetQueryResultsStream'
+              - 'athena:GetTableMetadata'
+              - 'athena:GetWorkGroup'
+              - 'athena:ListDataCatalogs'
+              - 'athena:ListDatabases'
+              - 'athena:ListEngineVersions'
+              - 'athena:ListNamedQueries'
+              - 'athena:ListPreparedStatements'
+              - 'athena:ListQueryExecutions'
+              - 'athena:ListTableMetadata'
+              - 'athena:ListTagsForResource'
+              - 'athena:ListWorkGroups'
+              - 'athena:StartQueryExecution'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'glue:GetDatabase'
+              - 'glue:GetDatabases'
+              - 'glue:GetTable'
+              - 'glue:GetTables'
+              - 'glue:GetPartition'
+              - 'glue:GetPartitions'
+              - 'glue:BatchGetPartition'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 's3:GetBucketLocation'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+              - 's3:ListBucketMultipartUploads'
+              - 's3:ListMultipartUploadParts'
+              - 's3:AbortMultipartUpload'
+              - 's3:CreateBucket'
+              - 's3:PutObject'
+              - 's3:PutBucketPublicAccessBlock'
+            Resource: 'arn:aws:s3:::iot-athena-results-*'
+          - Effect: Allow
+            Action:
+              - 's3:GetBucketLocation'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+            Resource: 'arn:aws:s3:::iot-analytic-bucket-*'
+          - Effect: Allow
+            Action:
+              - 'sns:ListTopics'
+              - 'sns:GetTopicAttributes'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'cloudwatch:PutMetricAlarm'
+              - 'cloudwatch:DescribeAlarms'
+              - 'cloudwatch:DeleteAlarms'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'lakeformation:GetDataAccess'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: '*'
+      Roles: 
+        - !Ref LambdaAthenaExecutionRole
+  
+  #----------- S3 ----------------
+  AthenaResultsS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join [ '-', ['iot-athena-results', !Ref "AWS::AccountId", !Ref "AWS::Region"]]
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingS3Bucket
+        LogFilePrefix: athena-results-logs/
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'AES256'
+  
+  IoTAnalyticS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join [ '-', ['iot-analytic-bucket', !Ref "AWS::AccountId", !Ref "AWS::Region"]]
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingS3Bucket
+        LogFilePrefix: iot-analytic-logs/
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'AES256'
+  
+  LoggingS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join [ '-', ['log-bucket', !Ref "AWS::AccountId", !Ref "AWS::Region"]]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'AES256'
+  
+  LoggingS3BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref LoggingS3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: 's3:PutObject'
+            Effect: Allow
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref LoggingS3Bucket, '/*']]
+            Principal: 
+              Service: logging.s3.amazonaws.com
+            Condition:
+              ArnLike:
+                'aws:SourceARN':
+                  - !Join ['', ['arn:aws:s3:::', !Ref AthenaResultsS3Bucket]]
+                  - !Join ['', ['arn:aws:s3:::', !Ref IoTAnalyticS3Bucket]]
+              StringEquals:
+                'aws:SourceAccount': !Ref "AWS::AccountId"
+  
+  #-------DynamoDB tables---------
+  ElectricityMeteredByPeriodTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "CustomerID"
+          AttributeType: "N"
+        - AttributeName: "SensorID-Period"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "CustomerID"
+          KeyType: "HASH"
+        - AttributeName: "SensorID-Period"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 10
+      TableName: ElectricityMeteredByPeriod
+  
+  #-----SAM Lambda functions-----
+  RunAthenaQueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: fn-run-athena-query
+      CodeUri: fn-run-athena-query/
+      Handler: fn-run-athena-query.lambda_handler
+      Role: !GetAtt LambdaAthenaExecutionRole.Arn
+      Environment:
+        Variables:
+          ev_athena_output_location: !Join [ '', ['s3://iot-athena-results-', !Ref "AWS::AccountId", '-', !Ref "AWS::Region", '/']]
+          ev_date_run: '0000/00/00'
+      Events:
+          CWSchedule:
+            Type: Schedule
+            Properties:
+              Schedule: 'cron(30 3 * * ? *)' # 03h30 (UTC+0) => 00h30 (UTC-03:00)
+              Name: RunAthenaQuerySchedule
+              Description: Athena query run schedule
+              Enabled: false
+
+  WriteAthenaOutputToDDBFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: fn-write-athena-output-to-ddb
+      CodeUri: fn-write-athena-output-to-ddb/
+      Handler: fn-write-athena-output-to-ddb.lambda_handler
+      Role: !GetAtt LambdaIoTAnalyticExecutionRole.Arn
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref AthenaResultsS3Bucket
+            Events: 's3:ObjectCreated:*'
+            Filter:
+              S3Key:
+                Rules:
+                - Name: suffix
+                  Value: '.csv'

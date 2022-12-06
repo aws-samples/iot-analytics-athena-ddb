@@ -1,0 +1,2 @@
+This directory "../env-vars" is intended to hold environment variable files to be used by "sam local invoke" call.
+This files will be created when running shell script "invoke-fn-run-athena-query-dates.sh", saved on directory "../../scripts/bash/".
