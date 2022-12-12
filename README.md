@@ -12,6 +12,13 @@ To deploy and use this solution, you should have the following:
 - An <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html?nc2=h_ct&src=header_signup" target="_blank">AWS account</a>.
 - An <a href="https://aws.amazon.com/iam/" target="_blank">AWS Identity and Access Management (IAM)</a> user, with enough privileges to access resources used in this solution and to run commands from <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html" target="_blank">AWS SAM CLI</a>. To create the proper permissions for this user, verify how to <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_controlling.html" target="_blank">control access to AWS resources using policies</a> and the needed <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-permissions.html" target="_blank">permission for AWS SAM CLI</a>.
 - An <a href="https://aws.amazon.com/cloud9/" target="_blank">AWS Cloud9</a> environment, launched as an <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html#amazon-linux" target="_blank">Amazon Linux 2</a> platform, which holds the needed tools used to deploy this solution: <a href="https://aws.amazon.com/cli/" target="_blank">AWS CLI</a>, AWS SAM CLI, <a href="https://www.docker.com/" target="_blank">Docker engine</a> and <a href="https://www.python.org/downloads/" target="_blank">Python 3</a>. Follow the instructions to <a href="https://docs.aws.amazon.com/cloud9/latest/user-guide/create-environment-main.html#create-environment-console" target="_blank">create an EC2 environment</a> and <a href="https://docs.aws.amazon.com/cloud9/latest/user-guide/open-environment.html" target="_blank">open it</a> to start working.
+> :memo: **NOTE:**    
+> When creating the **EC2** environment, you can choose to connect to the instance using [AWS Systems Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html).   
+> This approach offers two key benefits:
+> - No requirement to open inbound ports for the instance.
+> - Option to launch the instance into a public or private subnet.
+> 
+> For more information, visit the page [Accessing no-ingress EC2 instances with AWS Systems Manager](https://docs.aws.amazon.com/cloud9/latest/user-guide/ec2-ssm.html)
 - A basic understanding of ***bash***, ***Python*** programing and ***SQL*** statements.
 
 ## Deploy the solution
@@ -192,6 +199,17 @@ During this process, this script will ask you to insert or confirm some configur
 - **Are you sure you want to delete the folder sam-iot-analytics in S3 which contains the artifacts? [y/N]**: Y
 
 After removing **AWS SAM** application `sam-iot-analytics`, delete the **AWS Cloud9** environment created to deploy this solution. Follow the instructions on page <a href="https://docs.aws.amazon.com/cloud9/latest/user-guide/delete-environment.html" target="_blank">Deleting an environment in AWS Cloud9</a>, to do so.
+
+## Recommendations
+
+The sample *IoT* and customer information data used to test this solution doesn't contain sensitive data.
+
+However, you can find scenarios where you need to identify and treat private data, mainly related with *Personally Identifiable Information* (***PII***).
+
+In such scenarios, you should consider configuring additional security features on the services used in this solution, to avoid sensitive data exposure:
+- To verify if there is sensitive data being sent to the Data Lake **S3** bucket, activate [Amazon Macie](https://aws.amazon.com/macie/) in the account running this solution. It uses machine learning (*ML*) and pattern matching to discover and protect your sensitive data.
+- Regarding **Amazon DynamoDB**, all data is encrypted at rest and in transit, by default. However, if you want to protect your data before sending it to **DynamoDB**, you can use client-side encryption. For more information, visit the public documentation for [Amazon DynamoDB Encryption Client](https://docs.aws.amazon.com/dynamodb-encryption-client/latest/devguide/what-is-ddb-encrypt.html).
+- To prevent data loss at **Amazon DynamoDB** table and avoid the need to reload it with Data Lake content, you can enable continuous backups using point-in-time recovery. For details on how to setup this feature, see [Point-in-time recovery for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery.html).
 
 ## Security
 

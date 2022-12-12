@@ -50,32 +50,15 @@ Resources:
         Statement: 
           - Effect: Allow
             Action:
-              - 'xray:PutTraceSegments'
-              - 'xray:PutTelemetryRecords'
-              - 'xray:GetSamplingRules'
-              - 'xray:GetSamplingTargets'
-              - 'xray:GetSamplingStatisticSummaries'
-            Resource: '*'
-          - Effect: Allow
-            Action:
               - 's3:GetBucketLocation'
               - 's3:GetObject'
               - 's3:ListBucket'
             Resource: 'arn:aws:s3:::iot-athena-results-*'
           - Effect: Allow
             Action:
-              - 'sns:ListTopics'
-              - 'sns:GetTopicAttributes'
-            Resource: '*'
-          - Effect: Allow
-            Action:
               - 'cloudwatch:PutMetricAlarm'
               - 'cloudwatch:DescribeAlarms'
               - 'cloudwatch:DeleteAlarms'
-            Resource: '*'
-          - Effect: Allow
-            Action:
-              - 'lakeformation:GetDataAccess'
             Resource: '*'
           - Effect: Allow
             Action:
@@ -107,14 +90,6 @@ Resources:
       PolicyName: lambda-athena-policy
       PolicyDocument: 
         Statement: 
-          - Effect: Allow
-            Action:
-              - 'xray:PutTraceSegments'
-              - 'xray:PutTelemetryRecords'
-              - 'xray:GetSamplingRules'
-              - 'xray:GetSamplingTargets'
-              - 'xray:GetSamplingStatisticSummaries'
-            Resource: '*'
           - Effect: Allow
             Action:
               - 'athena:BatchGetNamedQuery'
@@ -169,18 +144,9 @@ Resources:
             Resource: 'arn:aws:s3:::iot-analytic-bucket-*'
           - Effect: Allow
             Action:
-              - 'sns:ListTopics'
-              - 'sns:GetTopicAttributes'
-            Resource: '*'
-          - Effect: Allow
-            Action:
               - 'cloudwatch:PutMetricAlarm'
               - 'cloudwatch:DescribeAlarms'
               - 'cloudwatch:DeleteAlarms'
-            Resource: '*'
-          - Effect: Allow
-            Action:
-              - 'lakeformation:GetDataAccess'
             Resource: '*'
           - Effect: Allow
             Action:

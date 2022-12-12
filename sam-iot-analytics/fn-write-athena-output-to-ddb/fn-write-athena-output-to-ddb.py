@@ -17,6 +17,8 @@ CSV file, containing Athena query results, is uploaded
 to the S3 bucket which holds the Athena outputs, into 
 prefix "electricity_by_period/"
 """
+import os
+import tempfile
 import csv
 import json
 import urllib.parse
@@ -36,7 +38,9 @@ def lambda_handler(event, context):
     
     try:
         if key_prefix == "electricity_by_period":
-            download_path = "/tmp/electricity_by_period.csv"
+            tmpdir = tempfile.mkdtemp()
+            saved_umask = os.umask(0o77)
+            download_path = os.path.join(tmpdir, "electricity_by_period.csv")
         else:
             assert (True), "Not a valid Key prefix! Current value = " + key_prefix
     except AssertionError as e:
@@ -79,6 +83,11 @@ def lambda_handler(event, context):
         print(e)
         print("Error working in file:", download_path)
         raise e
+    else:
+        os.remove(download_path)
+    finally:
+        os.umask(saved_umask)
+        os.rmdir(tmpdir)
     
     # Write each member from Items list as an item into DynamDB table defined in variable "ddb_table_name"
     # Using batch_writer() action to automatically handle buffering and send items in batches.
