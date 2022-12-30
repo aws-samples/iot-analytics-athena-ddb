@@ -195,7 +195,7 @@ The above script will run the following tasks:
 The content of this script can be visualized in <a href="/scripts/bash/undeploy-solution.sh" target="_blank">this link</a>.
 
 During this process, this script will ask you to insert or confirm some configuration parameters. Fill them with these values:
-- **Are you sure you want to delete the stack sam-iot-analytics in the region us-west-2? [y/N]**: Y
+- **Are you sure you want to delete the stack sam-iot-analytics in the region \<AWS Region code\>? [y/N]**: Y
 - **Are you sure you want to delete the folder sam-iot-analytics in S3 which contains the artifacts? [y/N]**: Y
 
 After removing **AWS SAM** application `sam-iot-analytics`, delete the **AWS Cloud9** environment created to deploy this solution. Follow the instructions on page <a href="https://docs.aws.amazon.com/cloud9/latest/user-guide/delete-environment.html" target="_blank">Deleting an environment in AWS Cloud9</a>, to do so.
