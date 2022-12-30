@@ -55,10 +55,10 @@ def lambda_handler(event, context):
     # Calculating Total Electricity metered by hour, in one day, per customer
     try:
         out_electricity_by_hour = athena.start_query_execution(
-            QueryString="SELECT cust.customerid, (cast(cust.sendorid as varchar) || '#' || iot.year || '-' || iot.month || '-' || iot.day || 'T' || iot.hourcollected) sensorid_hour, iot.kwh total_kwh " +
+            QueryString="SELECT cust.customerid, (cast(cust.sensorid as varchar) || '#' || iot.year || '-' || iot.month || '-' || iot.day || 'T' || iot.hourcollected) sensorid_hour, iot.kwh total_kwh " +
                             "FROM iot_electricity_metering iot " +
                             "INNER JOIN customer_meter_sensor cust " +
-                            "ON (iot.sendorid = cust.sendorid) " +
+                            "ON (iot.sensorid = cust.sensorid) " +
                             "WHERE year = '" + year_part + "' " + 
                               "AND month = '" + month_part + "' " +
                               "AND day = '" + day_part + "' " +
@@ -83,14 +83,14 @@ def lambda_handler(event, context):
     # Calculating Total Electricity metered by day, per customer
     try:
         out_electricity_by_day = athena.start_query_execution(
-            QueryString="SELECT cust.customerid, (cast(cust.sendorid as varchar) || '#' || iot.year || '-' || iot.month || '-' || iot.day) sensorid_day, ROUND(SUM(iot.kwh), 2) total_kwh " +
+            QueryString="SELECT cust.customerid, (cast(cust.sensorid as varchar) || '#' || iot.year || '-' || iot.month || '-' || iot.day) sensorid_day, ROUND(SUM(iot.kwh), 2) total_kwh " +
                             "FROM iot_electricity_metering iot " +
                             "INNER JOIN customer_meter_sensor cust " +
-                            "ON (iot.sendorid = cust.sendorid) " +
+                            "ON (iot.sensorid = cust.sensorid) " +
                             "WHERE year = '" + year_part + "' " +
                               "AND month = '" + month_part + "' " +
                               "AND day = '" + day_part + "' " +
-                            "GROUP BY cust.customerid, (cast(cust.sendorid as varchar) || '#' || iot.year || '-' || iot.month || '-' || iot.day) " +
+                            "GROUP BY cust.customerid, (cast(cust.sensorid as varchar) || '#' || iot.year || '-' || iot.month || '-' || iot.day) " +
                             "ORDER BY 1, 2",
             QueryExecutionContext={
                 'Database': 'iotanalyticsdb',
@@ -113,13 +113,13 @@ def lambda_handler(event, context):
     if (day_part == str(calendar.monthrange(int(year_part), int(month_part))[1])):
         try:
             out_electricity_by_month = athena.start_query_execution(
-                QueryString="SELECT cust.customerid, (cast(cust.sendorid as varchar) || '#' || iot.year || '-' || iot.month) sensorid_month, ROUND(SUM(iot.kwh), 2) total_kwh " +
+                QueryString="SELECT cust.customerid, (cast(cust.sensorid as varchar) || '#' || iot.year || '-' || iot.month) sensorid_month, ROUND(SUM(iot.kwh), 2) total_kwh " +
                                 "FROM iot_electricity_metering iot " +
                                 "INNER JOIN customer_meter_sensor cust " +
-                                "ON (iot.sendorid = cust.sendorid) " +
+                                "ON (iot.sensorid = cust.sensorid) " +
                                 "WHERE year = '" + year_part + "' " +
                                   "AND month = '" + month_part + "' " +
-                                "GROUP BY cust.customerid, (cast(cust.sendorid as varchar) || '#' || iot.year || '-' || iot.month) " +
+                                "GROUP BY cust.customerid, (cast(cust.sensorid as varchar) || '#' || iot.year || '-' || iot.month) " +
                                 "ORDER BY 1, 2",
                 QueryExecutionContext={
                     'Database': 'iotanalyticsdb',

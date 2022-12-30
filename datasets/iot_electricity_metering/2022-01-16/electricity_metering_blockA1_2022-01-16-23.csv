@@ -1,4 +1,4 @@
-SendorID,Voltage,Current,Frequency,kWh,HourCollected
+SensorID,Voltage,Current,Frequency,kWh,HourCollected
 51246501,240,10,60,0.27,23
 51246502,240,10,60,0.28,23
 51246503,240,10,60,0.24,23

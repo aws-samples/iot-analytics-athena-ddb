@@ -128,7 +128,7 @@ echo "##################################################"
 aws athena start-query-execution \
     --query-string "CREATE EXTERNAL TABLE customer_meter_sensor(
                         customerid bigint,
-                        sendorid bigint,
+                        sensorid bigint,
                         sensorgroup string)
                     ROW FORMAT DELIMITED 
                       FIELDS TERMINATED BY ',' 
@@ -149,7 +149,7 @@ echo "#####################################################"
 
 aws athena start-query-execution \
     --query-string "CREATE EXTERNAL TABLE iot_electricity_metering(
-                          sendorid bigint, 
+                          sensorid bigint, 
                           voltage bigint, 
                           \`current\` bigint, 
                           frequency bigint, 
